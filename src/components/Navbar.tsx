@@ -7,30 +7,37 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import axios from "axios";
-import { Fragment, useEffect, useState } from "react";
-import { Cart } from "../../@types";
+import { Fragment, useEffect } from "react";
+import { useAuthContext } from "../context/auth";
+import { useCartContext } from "../context/cart";
+import { Url } from "../helpers/url";
 import { NavLink } from "./NavLink";
 
-interface NavbarProps {
-  cart?: Cart;
-}
+interface NavbarProps {}
 
-export const Navbar: React.FC<NavbarProps> = ({ cart }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+export const Navbar: React.FC<NavbarProps> = ({}) => {
+  const [isLoggedIn, setIsLoggedIn] = useAuthContext();
+  const [cart, setCart] = useCartContext();
 
   useEffect(() => {
+    getCart();
     checkLogin();
   }, []);
 
   const checkLogin = async () => {
-    const { data } = await axios.get("http://localhost:5000/users/me", {
-      withCredentials: true,
-    });
+    try {
+      const currentUser = await Url.get(Url.ME);
+      if (currentUser) {
+        setIsLoggedIn(true);
+      }
+    } catch (error) {}
+  };
 
-    if (data) {
-      setIsLoggedIn(true);
-    }
+  const getCart = async () => {
+    try {
+      const cart = await Url.get(Url.CART);
+      setCart(cart);
+    } catch (error) {}
   };
 
   return (
