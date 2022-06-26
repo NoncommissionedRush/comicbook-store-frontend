@@ -17,3 +17,15 @@ export type Book = {
   createdAt: Date;
   tags: string[];
 };
+
+export type ReservationItem = {
+  bookId: number;
+  amount: number;
+};
+
+export type Reservation = {
+  id: string;
+  status: string;
+  note: string;
+  items: ReservationItem[];
+};
