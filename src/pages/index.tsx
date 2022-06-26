@@ -1,47 +1,26 @@
-import { Button, Heading } from "@chakra-ui/react";
-import axios from "axios";
 import { GetStaticProps } from "next";
-import { Fragment, useEffect, useState } from "react";
-import { Book, Cart } from "../../@types";
+import { Fragment } from "react";
+import { Book } from "../../@types";
 import { Card } from "../components/Card";
 import { Container } from "../components/Container";
 import { DarkModeSwitch } from "../components/DarkModeSwitch";
 import { Hero } from "../components/Hero";
 import { Main } from "../components/Main";
 import { Navbar } from "../components/Navbar";
+import { useAuthContext } from "../context/auth";
+import { Url } from "../helpers/url";
 
 const Index = ({ books }: { books: Book[] }) => {
-  const [cart, setCart] = useState<Cart>({ items: [], size: 0, total: 0 });
-  useEffect(() => {
-    getCart();
-  }, []);
+  const [isLoggedIn] = useAuthContext();
 
-  async function getCart() {
-    const { data }: { data: Cart } = await axios.get(
-      "http://localhost:5000/cart",
-      {
-        withCredentials: true,
-      }
-    );
-    setCart(data);
-  }
-
-  async function updateCart(bookId: number) {
-    const { data } = await axios.post(
-      "http://localhost:5000/cart",
-      { bookId: bookId, amount: 1 },
-      { withCredentials: true }
-    );
-    setCart(data);
-  }
   return (
     <Fragment>
-      <Navbar cart={cart} />
+      <Navbar />
       <Container>
         <Hero />
         <Main>
           {books.map((item, index) => {
-            return <Card book={item} key={index} updateCart={updateCart} />;
+            return <Card book={item} key={index} showEditButton={isLoggedIn} />;
           })}
         </Main>
       </Container>
@@ -53,8 +32,7 @@ const Index = ({ books }: { books: Book[] }) => {
 export default Index;
 
 export const getStaticProps: GetStaticProps = async () => {
-  const res = await fetch("http://localhost:5000/books");
-  const books = await res.json();
+  const books = await Url.get(Url.BOOKS);
   return {
     props: {
       books,
