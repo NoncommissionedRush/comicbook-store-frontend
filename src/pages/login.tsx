@@ -1,16 +1,27 @@
 import { Button, Heading } from "@chakra-ui/react";
-import axios from "axios";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Container } from "../components/Container";
 import { InputField } from "../components/InputField";
 import { Navbar } from "../components/Navbar";
+import { useAuthContext } from "../context/auth";
+import { Url } from "../helpers/url";
 
 interface loginProps {}
 
-const login: React.FC<loginProps> = ({}) => {
+const Login: React.FC<loginProps> = ({}) => {
   const router = useRouter();
+  const [isLoggedIn] = useAuthContext();
+
+  useEffect(() => {
+    checkLogin();
+  }, []);
+
+  const checkLogin = async () => {
+    isLoggedIn && router.push("/");
+  };
+
   return (
     <Fragment>
       <Navbar />
@@ -20,13 +31,7 @@ const login: React.FC<loginProps> = ({}) => {
           initialValues={{ username: "", password: "" }}
           onSubmit={async (values, actions) => {
             actions.setSubmitting(true);
-            const { data } = await axios.post(
-              "http://localhost:5000/users/auth/login",
-              values,
-              {
-                withCredentials: true,
-              }
-            );
+            const data = Url.post(Url.LOGIN, values);
             actions.setSubmitting(false);
             if (data) {
               router.push("/");
@@ -62,4 +67,4 @@ const login: React.FC<loginProps> = ({}) => {
   );
 };
 
-export default login;
+export default Login;
