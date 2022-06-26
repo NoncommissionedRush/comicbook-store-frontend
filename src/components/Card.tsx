@@ -1,15 +1,23 @@
 import { AddIcon, CheckIcon } from "@chakra-ui/icons";
-import { Badge, Box, Link } from "@chakra-ui/react";
+import { Badge, Box, Button, Link } from "@chakra-ui/react";
 import { useState } from "react";
 import { Book } from "../../@types";
+import { useCartContext } from "../context/cart";
+import { Url } from "../helpers/url";
 
 type CardProps = {
   book: Book;
-  updateCart?: (bookId: number) => void;
+  showEditButton: boolean;
 };
 
-export const Card: React.FC<CardProps> = ({ book, updateCart }) => {
+export const Card: React.FC<CardProps> = ({ book, showEditButton }) => {
   const [added, setAdded] = useState(false);
+  const [, setCart] = useCartContext();
+
+  async function updateCart(bookId: number) {
+    const updatedCart = await Url.post(Url.CART, { bookId, amount: 1 });
+    setCart(updatedCart);
+  }
 
   return (
     <Box
@@ -36,7 +44,7 @@ export const Card: React.FC<CardProps> = ({ book, updateCart }) => {
           lineHeight="tight"
           noOfLines={1}
         >
-          <Link href={"#"}>{book.title}</Link>
+          <Link href={`book/${book.id}`}>{book.title}</Link>
         </Box>
 
         {added ? (
@@ -63,6 +71,12 @@ export const Card: React.FC<CardProps> = ({ book, updateCart }) => {
             EUR
           </Box>
         </Box>
+
+        {showEditButton && (
+          <Button size={"xs"} mt={2} bgColor={"red.500"}>
+            Edit
+          </Button>
+        )}
       </Box>
     </Box>
   );
