@@ -5,7 +5,7 @@ export const Container = (props: FlexProps) => (
     direction="column"
     alignItems="center"
     mx="auto"
-    py={20}
+    pt={20}
     maxWidth={"1000px"}
     color="black"
     _dark={{
