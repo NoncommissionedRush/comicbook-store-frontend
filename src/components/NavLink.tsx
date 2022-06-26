@@ -1,6 +1,6 @@
 import { Link, useColorModeValue } from "@chakra-ui/react";
-import axios from "axios";
 import { useRouter } from "next/router";
+import { Url } from "../helpers/url";
 
 interface NavLinkProps {
   text: string;
@@ -14,8 +14,9 @@ export const NavLink: React.FC<NavLinkProps> = ({
   type = "link",
 }) => {
   const router = useRouter();
+
   const logout = async () => {
-    await axios.delete("http://localhost:5000/users/auth/logout");
+    await Url.delete(Url.LOGOUT);
     router.reload();
   };
   return (
