@@ -41,13 +41,15 @@ const CartComponent: React.FC<CartProps> = ({}) => {
 
   return (
     <Fragment>
-      <Navbar cart={cart} />
+      <Navbar />
       <Container alignItems={"start"}>
         <Heading my={10}>Cart</Heading>
         <Main>
           {cart.items.length ? (
             cart.items.map((item, index) => {
-              return <Card book={item.book} key={index} />;
+              return (
+                <Card book={item.book} key={index} showEditButton={false} />
+              );
             })
           ) : (
             <p>Empty :(</p>
